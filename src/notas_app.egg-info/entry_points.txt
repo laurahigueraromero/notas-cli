@@ -1,0 +1,2 @@
+[console_scripts]
+notas = notas.cli:app

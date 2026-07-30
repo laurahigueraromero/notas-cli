@@ -1,0 +1,11 @@
+pyproject.toml
+src/notas/__init__.py
+src/notas/almacen.py
+src/notas/cli.py
+src/notas_app.egg-info/PKG-INFO
+src/notas_app.egg-info/SOURCES.txt
+src/notas_app.egg-info/dependency_links.txt
+src/notas_app.egg-info/entry_points.txt
+src/notas_app.egg-info/requires.txt
+src/notas_app.egg-info/top_level.txt
+tests/test_almacen.py
