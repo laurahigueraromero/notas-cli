@@ -1,0 +1,38 @@
+# Tareas: Bloc de notas CLI
+
+Cada tarea sigue el ciclo TDD: test (Red) -> código hasta que pase (Green).
+
+## Fase 0 — Preparación
+- [x] T0.1: Estructura de carpetas (src/notas/, tests/).
+- [x] T0.2: requirements.txt e instalar en un venv.
+- [x] T0.3: .gitignore.
+- [x] T0.4: __init__.py y comprobar que pytest arranca.
+
+## Fase 1 — Capa de datos (almacen.py)
+- [x] T1.1: obtener_carpeta — resuelve y crea "apuntes sueltos".
+- [x] T1.2: slugify — normaliza el título (minúsculas, sin acentos ni espacios).
+- [x] T1.3: componer_nombre — nombre de archivo a partir de fecha, hora y slug.
+- [x] T1.4: crear_nota — escribe el .txt en la carpeta.
+- [x] T1.5: listar_notas — ordenadas por fecha descendente.
+- [x] T1.6: buscar_notas — coincidencias por fecha o título.
+
+## Fase 2 — CLI (cli.py con typer)
+- [x] T2.1: Comando crear (título obligatorio, cuerpo interactivo hasta Ctrl+Z).
+- [x] T2.2: Comando listar.
+- [x] T2.3: Comando leer (0 / 1 / varias coincidencias).
+
+## Fase 3 — Cierre
+- [ ] T3.1: README.md con instalación y ejemplos.
+- [ ] T3.2: Repaso de trazabilidad requisito -> test.
+- [ ] T3.3: Prueba manual end-to-end.
+
+## Mapa requisito -> tarea
+- RF1 -> T1.4, T2.1
+- RF2 -> T1.3
+- RF3 -> T1.5, T2.2
+- RF4 -> T1.4
+- RF5 -> T1.1
+- RF6 -> T1.6, T2.3
+
+## Pendiente (mejora futura)
+- Hacer que el comando `notas` funcione desde cualquier carpeta (pipx o instalación global).

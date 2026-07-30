@@ -1,0 +1,40 @@
+# Spec: Bloc de notas por línea de comandos
+
+## Propósito y contexto
+Una herramienta CLI para crear, listar y leer notas de texto
+rápidas desde la terminal, sin salir del flujo de trabajo.
+
+## Por qué
+Los editores de notas gráficos rompen el foco. Se busca capturar
+una idea en segundos y recuperarla después sin abrir una app aparte.
+
+## Usuarios
+Desarrollador que vive en la terminal.
+
+## Historias de usuario
+- Como usuario, quiero crear una nota con un título y un cuerpo,
+  para guardar una idea al vuelo.
+- Como usuario, quiero listar todas mis notas con su fecha,
+  para ver qué tengo guardado.
+- Como usuario, quiero leer una nota por su fecha o título.
+- Como usuario, quiero borrar una nota que ya no necesito.
+
+## Requisitos funcionales
+- RF1: El sistema DEBE crear una nota con título obligatorio y cuerpo opcional.
+- RF2: El sistema DEBE asignar a cada nota una marca de fecha y hora única que la identifica.
+- RF3: El sistema DEBE listar notas ordenadas por fecha (más reciente primero).
+- RF4: Las notas DEBEN persistir entre ejecuciones del programa.
+- RF5: El sistema DEBE guardar cada nota como un archivo independiente en una carpeta del escritorio llamada "apuntes sueltos", y si no existe aún, crearla, para que el usuario pueda acceder cuando quiera.
+- RF6: El sistema DEBE mostrar el contenido completo de una nota buscándola por fecha o por título.
+
+## Criterios de aceptación
+- Crear una nota y volver a ejecutar la app la muestra en el listado.
+- Eliminar el archivo de una nota desde la carpeta hace que deje de aparecer en el listado.
+- Intentar leer una nota inexistente devuelve un mensaje de error claro, no un crash.
+
+## Fuera de alcance (esta versión)
+- Edición de notas existentes.
+- Borrado de notas desde la aplicación (se realiza eliminando el archivo desde la carpeta "apuntes sueltos").
+- Etiquetas o carpetas.
+- Interfaz gráfica o web.
+- Sincronización en la nube.

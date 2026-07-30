@@ -1,0 +1,61 @@
+# Plan técnico: Bloc de notas CLI
+
+## Resumen
+CLI en Python que gestiona notas como archivos .txt independientes en una
+carpeta del escritorio. Sin base de datos: el sistema de archivos es la
+fuente de verdad. El orden y la identidad de cada nota se derivan de su
+marca de fecha y hora.
+
+## Stack
+- Python 3.11+
+- typer (CLI, comandos y ayuda automática vía type hints)
+- Librería estándar: pathlib (rutas), datetime (marcas de tiempo)
+- pytest (tests)
+
+## Estructura del proyecto
+notas-app/
+├── specs/          spec.md, plan.md, tasks.md
+├── src/notas/      __init__.py, cli.py (interfaz), almacen.py (datos)
+├── tests/          test_almacen.py
+├── requirements.txt
+├── pyproject.toml
+├── .gitignore
+└── README.md
+
+Se separa cli.py (interacción con el usuario) de almacen.py (lógica de
+archivos), igual que en Spring se separa controller de repository: así
+los tests de la lógica no dependen de la terminal.
+
+## Formato de la nota en disco
+Cada nota es un archivo .txt cuyo NOMBRE codifica identidad, orden y título,
+y cuyo CONTENIDO es el cuerpo en texto plano:
+
+  Nombre:    2026-07-29_1830_ideas-proyecto.txt
+             (fecha)  (hora) (título slug)
+  Contenido: el cuerpo tal cual lo escribió el usuario
+
+- La marca YYYY-MM-DD_HHMM da orden cronológico (ordenar los nombres = ordenar
+  por fecha) e identidad única.
+- El título va "slugificado" (minúsculas, sin espacios ni acentos).
+
+## Ubicación de la carpeta
+- Ruta: Path.home() / "Desktop" / "apuntes sueltos"
+- Si no existe, se crea (mkdir con parents=True, exist_ok=True).
+
+## Comandos (typer)
+- notas crear            -> pide título y cuerpo interactivamente
+- notas listar           -> lista todas, más reciente primero
+- notas leer <criterio>  -> muestra la nota cuya fecha o título coincida
+
+(No hay comando de borrado: el usuario elimina el archivo desde la carpeta.)
+
+## Flujos clave
+- Crear: se pide el título; luego se leen líneas del cuerpo hasta recibir la
+  señal de fin de entrada (Ctrl+Z en Windows -> EOFError en Python).
+- Listar: se leen los nombres de archivo, se ordenan descendente.
+- Leer: se buscan los nombres que contengan el criterio; 0 -> error claro,
+  1 -> se muestra, varias -> se listan para precisar.
+
+## Estrategia de tests (TDD)
+- Test antes que código (Red -> Green).
+- Los tests usan tmp_path de pytest (carpeta temporal), nunca el escritorio real.
