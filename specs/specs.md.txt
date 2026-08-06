@@ -31,6 +31,14 @@ Desarrollador que vive en la terminal.
 - Crear una nota y volver a ejecutar la app la muestra en el listado.
 - Eliminar el archivo de una nota desde la carpeta hace que deje de aparecer en el listado.
 - Intentar leer una nota inexistente devuelve un mensaje de error claro, no un crash.
+- Crear dos notas con el mismo título dentro del mismo minuto no sobrescribe
+  la primera: la marca de tiempo del nombre de archivo incluye segundos para
+  garantizar que cada nota tiene un nombre único.
+- Un título con caracteres inválidos para nombres de archivo en Windows
+  (`< > : " / \ | ? *`) se limpia al generar el nombre del archivo, en vez de
+  provocar un error al guardar la nota.
+- Intentar crear una nota con título vacío o compuesto solo de espacios
+  devuelve un error claro y no crea ningún archivo.
 
 ## Fuera de alcance (esta versión)
 - Edición de notas existentes.

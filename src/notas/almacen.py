@@ -18,6 +18,9 @@ def obtener_carpeta(base=None):
 
     return carpeta
 
+# Caracteres que Windows no permite en nombres de archivo.
+CARACTERES_INVALIDOS_WINDOWS = '<>:"/\\|?*'
+
 def slugify(titulo):
     # 1. Quitar acentos: "café" -> "cafe"
     #    Descompone cada letra acentuada en (letra + acento) y luego
@@ -28,7 +31,12 @@ def slugify(titulo):
     # 2. Minúsculas y quitar espacios sobrantes de los extremos
     texto = sin_acentos.lower().strip()
 
-    # 3. Reemplazar grupos de espacios por un solo guion
+    # 3. Quitar caracteres inválidos para nombres de archivo en Windows,
+    #    para que el título nunca rompa la escritura del archivo.
+    for caracter in CARACTERES_INVALIDOS_WINDOWS:
+        texto = texto.replace(caracter, "")
+
+    # 4. Reemplazar grupos de espacios por un solo guion
     #    (split() sin argumentos parte por cualquier cantidad de espacios
     #    y descarta los vacíos, así "varios   espacios" -> ["varios","espacios"])
     palabras = texto.split()
@@ -37,9 +45,11 @@ def slugify(titulo):
 def componer_nombre(fecha, titulo):
     # fecha.strftime da formato a la fecha/hora según un patrón:
     #   %Y = año (2026)   %m = mes (07)   %d = día (29)
-    #   %H = hora (18)    %M = minutos (30)
-    # Resultado: "2026-07-29_1830"
-    marca = fecha.strftime("%Y-%m-%d_%H%M")
+    #   %H = hora (18)    %M = minutos (30)  %S = segundos (45)
+    # Los segundos evitan que dos notas con el mismo título creadas dentro
+    # del mismo minuto generen el mismo nombre de archivo y se pisen.
+    # Resultado: "2026-07-29_183045"
+    marca = fecha.strftime("%Y-%m-%d_%H%M%S")
 
     # Reutilizamos slugify (T1.2) para limpiar el título
     titulo_slug = slugify(titulo)
@@ -48,6 +58,11 @@ def componer_nombre(fecha, titulo):
     return f"{marca}_{titulo_slug}.txt"
 
 def crear_nota(titulo, cuerpo, base=None, fecha=None):
+    # Título obligatorio también a nivel de datos, no solo en la CLI:
+    # cualquier código que use almacen.py directamente debe quedar protegido.
+    if not titulo or not titulo.strip():
+        raise ValueError("El título no puede estar vacío.")
+
     # Si no nos dan fecha, usamos la de ahora (uso real).
     # En los tests le pasamos una fecha fija para controlar el orden.
     if fecha is None:

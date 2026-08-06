@@ -1,6 +1,7 @@
 from pathlib import Path
 from notas import almacen
 from datetime import datetime
+import pytest
 
 def test_obtener_carpeta_crea_si_no_existe(tmp_path):
     carpeta = almacen.obtener_carpeta(base=tmp_path)
@@ -13,9 +14,42 @@ def test_slugify_normaliza_titulo():
     assert almacen.slugify("  Varios   espacios  ") == "varios-espacios"
 
 def test_componer_nombre_archivo():
-    fecha = datetime(2026, 7, 29, 18, 30)
+    # La marca incluye segundos para que dos notas con el mismo título
+    # en el mismo minuto no generen el mismo nombre de archivo.
+    fecha = datetime(2026, 7, 29, 18, 30, 45)
     nombre = almacen.componer_nombre(fecha, "Ideas Proyecto")
-    assert nombre == "2026-07-29_1830_ideas-proyecto.txt"
+    assert nombre == "2026-07-29_183045_ideas-proyecto.txt"
+
+def test_crear_nota_no_sobrescribe_mismo_titulo_mismo_minuto(tmp_path):
+    # Dos notas, mismo título, mismo minuto, distinto segundo:
+    # deben quedar como dos archivos distintos, no debe perderse la primera.
+    ruta1 = almacen.crear_nota(
+        "Idea", "primera", base=tmp_path,
+        fecha=datetime(2026, 7, 29, 18, 30, 1),
+    )
+    ruta2 = almacen.crear_nota(
+        "Idea", "segunda", base=tmp_path,
+        fecha=datetime(2026, 7, 29, 18, 30, 2),
+    )
+
+    assert ruta1 != ruta2
+    assert ruta1.exists()
+    assert ruta2.exists()
+    assert ruta1.read_text(encoding="utf-8") == "primera"
+    assert ruta2.read_text(encoding="utf-8") == "segunda"
+
+def test_slugify_elimina_caracteres_invalidos_windows():
+    resultado = almacen.slugify('Pregunta: ¿qué "importante"? <ok> | fin*')
+    caracteres_invalidos = '<>:"/\\|?*'
+    assert not any(caracter in resultado for caracter in caracteres_invalidos)
+
+def test_crear_nota_titulo_vacio_lanza_error(tmp_path):
+    with pytest.raises(ValueError):
+        almacen.crear_nota("   ", "cuerpo", base=tmp_path)
+
+    # No debe haber creado ningún archivo en la carpeta.
+    carpeta = almacen.obtener_carpeta(base=tmp_path)
+    assert list(carpeta.glob("*.txt")) == []
 
 def test_crear_nota_escribe_archivo(tmp_path):
     ruta = almacen.crear_nota(
