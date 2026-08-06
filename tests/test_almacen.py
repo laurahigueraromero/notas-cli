@@ -97,3 +97,31 @@ def test_buscar_notas(tmp_path):
 
     # Algo que no existe -> 0 resultados
     assert len(almacen.buscar_notas("xyz", base=tmp_path)) == 0
+
+def test_buscar_notas_criterio_en_mayusculas(tmp_path):
+    almacen.crear_nota("Ideas proyecto", "c", base=tmp_path,
+                        fecha=datetime(2026, 7, 29, 18, 0))
+
+    # El criterio en mayúsculas debe encontrar igual la nota.
+    assert len(almacen.buscar_notas("IDEAS", base=tmp_path)) == 1
+
+def test_listar_notas_carpeta_vacia(tmp_path):
+    assert almacen.listar_notas(base=tmp_path) == []
+
+def test_crear_nota_cuerpo_vacio(tmp_path):
+    # RF1: el cuerpo es opcional.
+    ruta = almacen.crear_nota("Solo titulo", "", base=tmp_path)
+    assert ruta.exists()
+    assert ruta.read_text(encoding="utf-8") == ""
+
+def test_listar_notas_no_incluye_archivo_borrado_manualmente(tmp_path):
+    ruta1 = almacen.crear_nota("Uno", "c", base=tmp_path,
+                                fecha=datetime(2026, 1, 1, 9, 0))
+    ruta2 = almacen.crear_nota("Dos", "c", base=tmp_path,
+                                fecha=datetime(2026, 1, 2, 9, 0))
+
+    ruta1.unlink()  # simula borrar el archivo desde la carpeta (criterio A2)
+
+    notas = almacen.listar_notas(base=tmp_path)
+    assert len(notas) == 1
+    assert notas[0] == ruta2

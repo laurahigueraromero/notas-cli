@@ -21,18 +21,37 @@ Cada tarea sigue el ciclo TDD: test (Red) -> código hasta que pase (Green).
 - [x] T2.2: Comando listar.
 - [x] T2.3: Comando leer (0 / 1 / varias coincidencias).
 
+  Nota (repaso de trazabilidad, T3.2): T2.1–T2.3 se marcaron hechas sin
+  tests de la capa CLI — `tests/test_cli.py` no existía. Cerrado en T2.7.
+
+## Fase 2.5 — Robustez y QA (post-repaso de trazabilidad)
+- [x] T2.4: componer_nombre incluye segundos en la marca de tiempo, para que
+      dos notas con el mismo título en el mismo minuto no se pisen (RF2).
+- [x] T2.5: slugify limpia caracteres inválidos de Windows (`< > : " / \ | ? *`)
+      del título antes de componer el nombre de archivo (RF1).
+- [x] T2.6: crear_nota valida título vacío/solo-espacios también en
+      almacen.py (antes solo se validaba en la CLI) (RF1).
+- [x] T2.7: tests/test_cli.py — cobertura de crear, listar y leer con
+      typer.testing.CliRunner (0/1/varias coincidencias en leer, incluyendo
+      que se muestre el contenido completo con 1 coincidencia).
+
 ## Fase 3 — Cierre
-- [ ] T3.1: README.md con instalación y ejemplos.
-- [ ] T3.2: Repaso de trazabilidad requisito -> test.
-- [ ] T3.3: Prueba manual end-to-end.
+- [x] T3.1: README.md con instalación, uso, estructura del proyecto y
+      casos límite manejados (Fase 2.5).
+- [x] T3.2: Repaso de trazabilidad requisito -> test (ver Fase 2.5 y mapa
+      actualizado abajo; huecos puros añadidos en test_almacen.py: carpeta
+      vacía, cuerpo vacío, criterio de búsqueda en mayúsculas, borrado
+      manual de archivo).
+- [x] T3.3: Prueba manual end-to-end (crear -> listar -> leer -> borrado
+      manual) confirmada por la usuaria sobre el escritorio real.
 
 ## Mapa requisito -> tarea
-- RF1 -> T1.4, T2.1
-- RF2 -> T1.3
-- RF3 -> T1.5, T2.2
+- RF1 -> T1.4, T2.1, T2.5, T2.6, T2.7
+- RF2 -> T1.3, T2.4
+- RF3 -> T1.5, T2.2, T2.7
 - RF4 -> T1.4
 - RF5 -> T1.1
-- RF6 -> T1.6, T2.3
+- RF6 -> T1.6, T2.3, T2.7
 
 ## Pendiente (mejora futura)
 - Hacer que el comando `notas` funcione desde cualquier carpeta (pipx o instalación global).
